@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const homeForSaleSchema = mongoose.Schema({
     address: String,
     property: String,
-    advancePayment: String,
     bathrooms: String,
     bedrooms: String,
     salePrice: String,
