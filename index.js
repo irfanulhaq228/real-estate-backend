@@ -17,7 +17,7 @@ app.use('/uploads', express.static('uploads'));
 db;
 
 app.get("/", (req, res) => {
-    res.json({ message: "Real Estate Backend is running correctly!" });
+    res.json({ message: "Real Estate Backend is running correctly!!!" });
 });
 
 app.use("/agent", AgentRouter);
