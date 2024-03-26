@@ -18,6 +18,7 @@ const getHomesForRent = async (req, res) => {
 
 const createHomesForRent = async (req, res) => {
     try {
+        req.body.nearbyAddresses = JSON.parse(req.body.nearbyAddresses);
         req.body.images = req.files.images.map((file) => file.filename);
         req.body.video = req.files.video[0].filename;
         const newHome = await homeForRentModel.create(req.body);
@@ -83,8 +84,8 @@ const approvedRentalHomes = async(req, res) => {
     }
 };
 
-module.exports = { 
-    getHomesForRent, 
+module.exports = {
+    getHomesForRent,
     createHomesForRent, 
     getRentalHomeById, 
     deleteRentalHomeById, 

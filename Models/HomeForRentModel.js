@@ -13,11 +13,11 @@ const homeForRentSchema = mongoose.Schema({
     keyFeatures: String,
     buildingSize: String,
     lotSqft: String,
+    sqft: String,
     petFees: String,
-    sizeSqft: String,
-    sizeAcre: String,
     images: [],
     video: String,
+    nearbyAddresses: [],
     agent: { type: mongoose.Schema.Types.ObjectId, ref: 'agent' },
     status: { type: Boolean, default: false }
 }, {
