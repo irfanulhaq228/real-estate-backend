@@ -19,6 +19,7 @@ const getHomesForRent = async (req, res) => {
 const createHomesForRent = async (req, res) => {
     try {
         req.body.nearbyAddresses = JSON.parse(req.body.nearbyAddresses);
+        req.body.location = JSON.parse(req.body.location);
         req.body.images = req.files.images.map((file) => file.filename);
         req.body.video = req.files.video[0].filename;
         const newHome = await homeForRentModel.create(req.body);
@@ -34,9 +35,36 @@ const getRentalHomeById = async (req, res) => {
         const { id } = req.params;
         const rentalHome = await homeForRentModel.findById(id);
         if(!rentalHome){
-            return res.status(400).json({ message: "No Data Found" })
+            return res.status(400).json({ message: "No Data Found" });
         }
-        return res.status(200).json({ message: rentalHome });
+        const loc = rentalHome?.location.coordinates;
+        const filteredRentalHomes = await homeForRentModel.aggregate([
+            {
+                $geoNear: {
+                    near: { type: "Point", coordinates: [loc[0], loc[1]] },
+                    key: "location",
+                    maxDistance: 4000,
+                    distanceField: "dist.calculated",
+                    spherical: true
+                }
+            },
+            {
+                $match: {
+                    _id: { $ne: rentalHome._id }
+                }
+            },
+            {
+                $match: {
+                    status: true
+                }
+            }
+        ]);
+        const responseMessage = {
+            rentalHome: rentalHome,
+            nearbyHouses: filteredRentalHomes
+        };
+
+        return res.status(200).json({ message: responseMessage });
     }catch(error){
         console.log(error);
         return res.status(500).json({ message: "Network Error" });
@@ -91,4 +119,4 @@ module.exports = {
     deleteRentalHomeById, 
     updateRentalHomeById,
     approvedRentalHomes
-}
+};

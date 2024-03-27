@@ -18,6 +18,8 @@ const getHomesForSale = async (req, res) => {
 
 const createHomesForSale = async (req, res) => {
     try {
+        req.body.nearbyAddresses = JSON.parse(req.body.nearbyAddresses);
+        req.body.location = JSON.parse(req.body.location);
         req.body.images = req.files.images.map((file) => file.filename);
         req.body.video = req.files.video[0].filename;
         const newHome = await homeForSaleModel.create(req.body);
@@ -29,14 +31,41 @@ const createHomesForSale = async (req, res) => {
 };
 
 const getSaleHomeById = async (req, res) => {
-    try {
+    try{
         const { id } = req.params;
         const sellHome = await homeForSaleModel.findById(id);
-        if (!sellHome) {
-            return res.status(400).json({ message: "No Data Found" })
+        if(!sellHome){
+            return res.status(400).json({ message: "No Data Found" });
         }
-        return res.status(200).json({ message: sellHome });
-    } catch (error) {
+        const loc = sellHome?.location.coordinates;
+        const filteredSellHomes = await homeForSaleModel.aggregate([
+            {
+                $geoNear: {
+                    near: { type: "Point", coordinates: [loc[0], loc[1]] },
+                    key: "location",
+                    maxDistance: 4000,
+                    distanceField: "dist.calculated",
+                    spherical: true
+                }
+            },
+            {
+                $match: {
+                    _id: { $ne: sellHome._id }
+                }
+            },
+            {
+                $match: {
+                    status: true
+                }
+            }
+        ]);
+        const responseMessage = {
+            sellHome: sellHome,
+            nearbyHouses: filteredSellHomes
+        };
+
+        return res.status(200).json({ message: responseMessage });
+    }catch(error){
         console.log(error);
         return res.status(500).json({ message: "Network Error" });
     }

@@ -17,6 +17,7 @@ const homeForRentSchema = mongoose.Schema({
     petFees: String,
     images: [],
     video: String,
+    location: {},
     nearbyAddresses: [],
     agent: { type: mongoose.Schema.Types.ObjectId, ref: 'agent' },
     status: { type: Boolean, default: false }
