@@ -4,9 +4,11 @@ const dotenv = require("dotenv");
 const db = require("./db/db");
 
 const AgentRouter = require("./Routes/AgentRoute");
+const UserRouter = require("./Routes/UserRoute");
 const HomeForRentRouter = require("./Routes/HomeForRentRoute");
 const HomeForSaleRouter = require("./Routes/HomeForSaleRoute");
 const AllHomesRouter = require("./Routes/AllHomesRoute");
+const FavouriteHouseRouter = require("./Routes/FavouriteHouseRoute");
 
 dotenv.config();
 const app = express();
@@ -22,11 +24,12 @@ app.get("/", (req, res) => {
 });
 
 app.use("/agent", AgentRouter);
+app.use("/user", UserRouter);
 app.use("/home-for-rent", HomeForRentRouter);
 app.use("/home-for-sale", HomeForSaleRouter);
 app.use("/all-homes", AllHomesRouter);
+app.use("/favourite-houses", FavouriteHouseRouter);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server runs at port ${process.env.PORT}`);
-})
-
+});
