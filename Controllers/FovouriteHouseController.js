@@ -1,4 +1,6 @@
 const favouriteHouseModel = require("../Models/FavouriteHouseModel");
+const homeForRentModel = require("../Models/HomeForRentModel");
+const homeForSaleModel = require("../Models/HomeForSaleModel");
 
 const getAllUsersFavouriteHouse = async(req, res) => {
     try{
@@ -44,10 +46,23 @@ const getUserFavouriteHouse = async(req, res) => {
         console.log(error);
         return res.status(500).json({ message: "Network Error" });
     }
+};
+
+const getFavouriteHousesInfo = async(req, res) => {
+    try{
+        const { favouriteHouses } = req.body;
+        const rentalHomesData = await homeForRentModel.find({ _id: { $in: favouriteHouses } });
+        const saleHomesData = await homeForSaleModel.find({ _id: { $in: favouriteHouses } });
+        return res.status(200).json({ message: rentalHomesData.concat(saleHomesData) });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message: "Network Error" });
+    }
 }
 
 module.exports = {
     getAllUsersFavouriteHouse,
     createUserFavouriteHouse,
-    getUserFavouriteHouse
+    getUserFavouriteHouse,
+    getFavouriteHousesInfo
 }

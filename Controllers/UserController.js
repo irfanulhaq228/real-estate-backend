@@ -26,7 +26,7 @@ const createUser = async(req, res) => {
                 maxAge: 30 * 24 * 60 * 60 * 1000
             }
         );
-        const user = await userModel.create({ ...req.body, token });
+        const user = await userModel.create({ ...req.body, token }).select("_id email name token");
         return res.status(200).json({ message: "User created successfully", user, token });
     } catch(error){
         console.log(error);
@@ -37,9 +37,50 @@ const createUser = async(req, res) => {
 const loginUser = async(req, res) => {
     try{
         const { email, password } = req.body;
-        const user = await userModel.findOne({ email, password }).select("_id, email, name, token");
+        const user = await userModel.findOne({ email, password }).select("_id email name token");
         if(!user){
             return res.status(400).json({ message: "Invalid Credentials" });
+        }
+        return res.status(200).json({ message: user });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message: "Server Error!" });
+    }
+};
+
+const editUser = async(req, res) => {
+    try{
+        const { id } = req.params;
+        const { editFor } = req.body;
+        const user = await userModel.findById(id);
+        if(!user){
+            return res.status(400).json({ message: "No Data Found" });
+        }
+        var updateUser = {}
+        if(editFor === "name"){
+            updateUser = await userModel.findByIdAndUpdate(id, { name: req.body.name }).select("_id email name token");
+        }else if(editFor === "email"){
+            updateUser = await userModel.findByIdAndUpdate(id, { email: req.body.email }).select("_id email name token");
+        }else{
+            const { prevPassword } = req.body;
+            if(prevPassword !== user?.password){
+                return res.status(400).json({ message: "Enter Correct Previous Password" }).select("_id email name token");
+            }
+            updateUser = await userModel.findByIdAndUpdate(id, { password: req.body.password });
+        }
+        return res.status(200).json({ message: updateUser });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message: "Server Error!" });
+    }
+};
+
+const getUserById = async(req, res) => {
+    try{
+        const { id } = req.params;
+        const user = await userModel.findById(id);
+        if(!user){
+            return res.status(400).json({ message: "No Data Found" }).select("_id email name token");
         }
         return res.status(200).json({ message: user });
     }catch(error){
@@ -52,5 +93,7 @@ const loginUser = async(req, res) => {
 module.exports = {
     getAllUser,
     createUser,
-    loginUser
+    loginUser,
+    editUser,
+    getUserById
 }
