@@ -12,6 +12,8 @@ const homeForSaleSchema = mongoose.Schema({
     keyFeatures: String,
     buildingSize: String,
     lotSqft: String,
+    fromTourDate: Date,
+    toTourDate: Date,
     sqft: String,
     petFees: String,
     images: [],

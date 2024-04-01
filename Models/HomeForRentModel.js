@@ -7,6 +7,8 @@ const homeForRentSchema = mongoose.Schema({
     bathrooms: String,
     bedrooms: String,
     monthlyPrice: String,
+    fromTourDate: Date,
+    toTourDate: Date,
     overview: String,
     services: String,
     title: String,
