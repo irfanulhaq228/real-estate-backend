@@ -112,11 +112,41 @@ const approvedRentalHomes = async(req, res) => {
     }
 };
 
+const getRentalHomesByAgentId = async(req, res) => {
+    try{
+        const { id } = req.params;
+        const data = await homeForRentModel.find({ agent: id });
+        if(data?.length === 0){
+            return res.status(400).json({ message: "No Data Found For Rent" })
+        }
+        return res.status(200).json({ message: data });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message: "Network Error" });
+    }
+};
+
+const getApprovedRentalHomesByAgentId = async(req, res) => {
+    try{
+        const { id } = req.params;
+        const data = await homeForRentModel.find({ agent: id, status: true });
+        if(data?.length === 0){
+            return res.status(400).json({ message: "No Data Found For Rent" })
+        }
+        return res.status(200).json({ message: data });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message: "Network Error" });
+    }
+};
+
 module.exports = {
     getHomesForRent,
     createHomesForRent, 
     getRentalHomeById, 
     deleteRentalHomeById, 
     updateRentalHomeById,
-    approvedRentalHomes
+    approvedRentalHomes,
+    getRentalHomesByAgentId,
+    getApprovedRentalHomesByAgentId
 };

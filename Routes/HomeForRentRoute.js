@@ -1,5 +1,5 @@
 const express = require("express");
-const { getHomesForRent, createHomesForRent, getRentalHomeById, deleteRentalHomeById, approvedRentalHomes } = require("../Controllers/HomeForRentController");
+const { getHomesForRent, createHomesForRent, getRentalHomeById, deleteRentalHomeById, approvedRentalHomes, getRentalHomesByAgentId, getApprovedRentalHomesByAgentId } = require("../Controllers/HomeForRentController");
 const { upload } = require("../Multer/Multer");
 
 const HomeForRentRouter = express.Router();
@@ -8,6 +8,9 @@ HomeForRentRouter.post("/create", upload.fields([ { name: 'images' }, { name: "v
 
 HomeForRentRouter.get("/", getHomesForRent);
 HomeForRentRouter.get("/approved", approvedRentalHomes);
+
+HomeForRentRouter.get("/by-agent/:id", getRentalHomesByAgentId);
+HomeForRentRouter.get("/by-agent/approved/:id", getApprovedRentalHomesByAgentId);
 
 HomeForRentRouter.get("/:id", getRentalHomeById);
 HomeForRentRouter.delete("/:id", deleteRentalHomeById);

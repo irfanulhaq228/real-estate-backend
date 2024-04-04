@@ -112,11 +112,41 @@ const approvedSaleHomes = async(req, res) => {
     }
 };
 
+const getSaleHomesByAgentId = async(req, res) => {
+    try{
+        const { id } = req.params;
+        const data = await homeForSaleModel.find({ agent: id });
+        if(data?.length === 0){
+            return res.status(400).json({ message: "No Data Found For Sale" })
+        }
+        return res.status(200).json({ message: data });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message: "Network Error" });
+    }
+};
+
+const getApprovedSaleHomesByAgentId = async(req, res) => {
+    try{
+        const { id } = req.params;
+        const data = await homeForSaleModel.find({ agent: id, status: true });
+        if(data?.length === 0){
+            return res.status(400).json({ message: "No Data Found For Sale" })
+        }
+        return res.status(200).json({ message: data });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message: "Network Error" });
+    }
+};
+
 module.exports = {
     getHomesForSale,
     createHomesForSale,
     getSaleHomeById,
     deleteSaleHomeById,
     updateSaleHomeById,
-    approvedSaleHomes
+    approvedSaleHomes,
+    getSaleHomesByAgentId,
+    getApprovedSaleHomesByAgentId
 }
