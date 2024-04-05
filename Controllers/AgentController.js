@@ -1,6 +1,7 @@
 const agentModel = require("../Models/AgentModel");
 const homeForRentModel = require("../Models/HomeForRentModel");
 const homeForSaleModel = require("../Models/HomeForSaleModel");
+const ReviewModel = require("../Models/ReviewModel");
 
 const getAgents = async(req, res) => {
     try{
@@ -67,9 +68,9 @@ const getAgentById = async(req, res) => {
         if(!findAgent){
             return res.status(400).json({ message: "No Data Found" })
         };
-        const rentalHomes = await homeForRentModel.find();
-        const saleHomes = await homeForSaleModel.find();
-        return res.status(200).json({ message: findAgent, rent: rentalHomes, sale: saleHomes });
+        const reviews = await ReviewModel.find({ agent: findAgent?._id }).populate({ path: "user", select: "name" });
+        findAgent.reviews = reviews
+        return res.status(200).json({ message: findAgent });
     }catch(error){
         console.log(error);
         return res.status(500).json({ message: "Network Error" })
@@ -79,7 +80,9 @@ const getAgentById = async(req, res) => {
 const searchAgentByUser = async(req, res) =>{
     try{
         var { location, name } = req.body;
-        name = name.toLowerCase();
+        if(name){
+            name = name.toLowerCase();
+        }
         var searchedAgent = [];
         const regex = new RegExp(name, 'i');
         if(name == "" && location == ""){
@@ -101,7 +104,14 @@ const searchAgentByUser = async(req, res) =>{
         if(searchedAgent?.length === 0){
             return res.status(400).json({ message: "No Agent of this Search Found" });
         }
-        return res.status(200).json({ message: searchedAgent });
+        const agentIds = searchedAgent.map((item) => item?._id);
+        const reviews = await ReviewModel.find({ agent: { $in: agentIds }  }).populate({ path: "user", select: "name" });
+
+        const agentsWithReviews = searchedAgent.map(agent => {
+            const agentReviews = reviews.filter(review => review.agent.equals(agent._id));
+            return { ...agent.toObject(), reviews: agentReviews };
+        });
+        return res.status(200).json({ message: agentsWithReviews });
     }catch(error){
         console.log(error);
         return res.status(500).json({ message: "Network Error" })
