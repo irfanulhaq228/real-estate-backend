@@ -129,7 +129,7 @@ const contactAgent = async (req, res) => {
             } else {
                 return res.status(200).json({ message: "Message Failed" });
             }
-        }else{
+        } else {
             if (req.body.houseType === "rent") {
                 house = await homeForRentModel.findById(req.body.houseId).populate({
                     path: "agent",
@@ -295,6 +295,40 @@ const requestTour = async (req, res) => {
     }
 };
 
+const connectWithLocalAgent = async (req, res) => {
+    try {
+        const { email, phone } = req.body;
+        const info = await transporter.sendMail({
+            from: email,
+            to: "digitologies2024@gmail.com",
+            subject: "Connect For Finding Local Agent",
+            text: "Connect For Finding Local Agent",
+            html: `
+                <div style="margin: 0; background-color: rgba(18, 183, 183, 0.128); padding: 10px; border-radius: 5px">
+                    <p style="font-size: 20px; margin: 0; padding: 0; font-weight: 600">User Information</p>
+                    <table style="width: 100%; border: 1; margin: 5px 0">
+                        <tr>
+                            <td style="width: 100px">Email</td>
+                            <td>${email}</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px">Phone</td>
+                            <td>${phone}</td>
+                        </tr>
+                    </table>
+                </div>
+            `
+        });
+        if (info?.messageId) {
+            return res.status(200).json({ message: "Message Forward Successfully" });
+        } else {
+            return res.status(200).json({ message: "Message Failed" });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+};
 
 module.exports = {
     getAllUser,
@@ -303,5 +337,6 @@ module.exports = {
     editUser,
     getUserById,
     contactAgent,
-    requestTour
-}
+    requestTour,
+    connectWithLocalAgent
+};
