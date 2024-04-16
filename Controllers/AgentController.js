@@ -1,6 +1,4 @@
 const agentModel = require("../Models/AgentModel");
-const homeForRentModel = require("../Models/HomeForRentModel");
-const homeForSaleModel = require("../Models/HomeForSaleModel");
 const ReviewModel = require("../Models/ReviewModel");
 
 const getAgents = async(req, res) => {

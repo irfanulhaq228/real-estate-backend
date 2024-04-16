@@ -10,6 +10,7 @@ const HomeForSaleRouter = require("./Routes/HomeForSaleRoute");
 const AllHomesRouter = require("./Routes/AllHomesRoute");
 const FavouriteHouseRouter = require("./Routes/FavouriteHouseRoute");
 const ReviewRouter = require("./Routes/ReviewRoute");
+const HomeByOwnerRouter = require("./Routes/HomeByOwnerRoute");
 
 dotenv.config();
 const app = express();
@@ -28,6 +29,7 @@ app.use("/agent", AgentRouter);
 app.use("/user", UserRouter);
 app.use("/home-for-rent", HomeForRentRouter);
 app.use("/home-for-sale", HomeForSaleRouter);
+app.use("/home-by-owner", HomeByOwnerRouter);
 app.use("/all-homes", AllHomesRouter);
 app.use("/favourite-houses", FavouriteHouseRouter);
 app.use("/review", ReviewRouter);
