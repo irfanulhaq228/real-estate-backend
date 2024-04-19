@@ -36,7 +36,7 @@ const createAgent = async(req, res) => {
 const loginAgent = async(req, res) => {
     try{
         const { email, password } = req.body;
-        const correctAgent = await agentModel.findOne({ email }).select("-passwod");
+        const correctAgent = await agentModel.findOne({ email });
         if(!correctAgent){
             return res.status(400).json({ message: "Invalid Credentials" });
         }
@@ -47,11 +47,14 @@ const loginAgent = async(req, res) => {
             return res.status(400).json({ message: "This Agent not yet approved" });
         }
         return res.status(200).json({ message: {
-            address: correctAgent.address,
-            email: correctAgent.email,
+            _id: correctAgent._id,
             name: correctAgent.name,
+            email: correctAgent.email,
+            phone: correctAgent.phone,
+            city: correctAgent.city,
+            zipCode: correctAgent.zipcode,
+            address: correctAgent.address,
             status: correctAgent.status,
-            _id: correctAgent._id
         } });
     }catch(error){
         console.log(error);
