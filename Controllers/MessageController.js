@@ -46,6 +46,23 @@ const getUsersFromAgent = async (req, res) => {
     }
 };
 
+const getAgentsFromUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await MessageModel.find({ user: id }).select("agent").populate({
+            path: "agent",
+            select: "name email"
+        });
+        if (data?.length === 0) {
+            return res.status(400).json({ message: "No Message Found of this User" });
+        };
+        return res.status(200).json({ message: data });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Network Error" });
+    }
+};
+
 const getUserMessages = async (req, res) => {
     try {
         const { id } = req.params;
@@ -65,5 +82,6 @@ module.exports = {
     getAllMessages,
     createMessage,
     getUsersFromAgent,
+    getAgentsFromUser,
     getUserMessages
-}
+};
