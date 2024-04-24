@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const db = require("./db/db");
+const io = require("./socket/socket")
 
 const AgentRouter = require("./Routes/AgentRoute");
 const UserRouter = require("./Routes/UserRoute");
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 
 db;
+io;
 
 app.get("/", (req, res) => {
     res.json({ message: "Real Estate Backend is running correctly!!!" });
